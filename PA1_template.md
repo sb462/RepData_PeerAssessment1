@@ -55,6 +55,19 @@ reshaping the data to average for each 5 minute time interval over all days
 step_by_interval <- aggregate(activity_data$steps, by = list(activity_data$interval), FUN= mean, na.rm=TRUE)
 setnames(step_by_interval, c("time.interval", "average.steps"))
 ```
+To figure out which time-interval, on an average contains the maximum number of steps,
+
+```r
+max.step.time.interval <-step_by_interval$time.interval[which(step_by_interval$average.steps==max(step_by_interval$average.steps))]
+max.df <- data.frame(max.step.interval=max.step.time.interval)
+print(max.df)
+```
+
+```
+##   max.step.interval
+## 1               835
+```
+
 plotting time series over the intervals
 
 
@@ -63,11 +76,19 @@ plot(step_by_interval$time.interval,step_by_interval$average.steps, type="l",mai
      xlab = "time interval", ylab= "average steps", col = "brown",lwd =3.0)
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
 To calculate the number of missing values in activity data,
 
 ```r
 rows_with_NA <- sum(!complete.cases(activity_data))
+
+na.df <- data.frame(rows.with.NA =rows_with_NA )
+print(na.df)
+```
+
+```
+##   rows.with.NA
+## 1         2304
 ```
 
 We take a strategy of filling in the missing values of "NA" steps by replacing them with average of that 5 minute interval, averaged over all the dates. To achieve this we add another column with the average steps to activity data and replace "NA" values with values from that column. R-code to achieve it is given below,
@@ -115,7 +136,7 @@ hist(steps_per_day$steps.p.day, col ="orange",main = "total steps taken per day.
      xlab ="steps per day.complete", ylab="frequency")
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
 To compare the activity between weekday and weekend we first define a function that will take the date values and determine whether that is a weekday or weekend. We use Chron package to achieve it.
 
 ```r
@@ -165,7 +186,7 @@ xyplot(steps~interval|day.of.week,data= summary.activity.data, type= "l",layout=
        ylab="average steps", main = "activity comparison weekday and weekend")
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
 We note that the activity in the interval of 500-1000 minutes, of 5-minute time interval is higher on weekdays than 
 weekends. This is expected as it is between 8 am to 4 pm on a working day, the time of high activity.
 
